@@ -6,7 +6,8 @@ RUN apt update && \
     apt install -y \
     postgresql \
     postgresql-contrib && \
-    su - postgres -c "cp -r /var/lib/postgresql/15/main /var/lib/postgresql/15/start" && \
+    su - postgres -c "mv /var/lib/postgresql/15/main /var/lib/postgresql/15/start" && \
+    su - postgres -c "ln -s /postgres /var/lib/postgresql/15/main" && \
     echo "listen_addresses = '*'" >> /etc/postgresql/15/main/postgresql.conf && \
     echo "host    all             all             172.17.0.1/24           md5" >> /etc/postgresql/15/main/pg_hba.conf && \
     echo "if [ \"\$POSTGRES_PASSWORD\" = \"\" ]; then" >> /usr/local/bin/root-setup.sh && \
@@ -14,10 +15,17 @@ RUN apt update && \
     echo "  exit -1" >> /usr/local/bin/root-setup.sh && \
     echo "fi" >> /usr/local/bin/root-setup.sh && \
     echo "" >> /usr/local/bin/root-setup.sh && \
-    echo "echo \"\"" >> /usr/local/bin/root-setup.sh && \
+    echo "/usr/local/bin/check-mounting-path.sh \"/postgres\"" >> /usr/local/bin/root-setup.sh && \
+    echo "if [ \$? -eq 0 ]; then" >> /usr/local/bin/root-setup.sh && \
+    echo "  chown postgres /postgres" >> /usr/local/bin/root-setup.sh && \
+    echo "  chgrp postgres /postgres" >> /usr/local/bin/root-setup.sh && \
+    echo "  chmod 700 /postgres" >> /usr/local/bin/root-setup.sh && \
+    echo "else" >> /usr/local/bin/root-setup.sh && \
+    echo "  exit -1" >> /usr/local/bin/root-setup.sh && \
+    echo "fi" >> /usr/local/bin/root-setup.sh && \
+    echo "" >> /usr/local/bin/root-setup.sh && \
     echo "service postgresql start" >> /usr/local/bin/root-setup.sh && \
     echo "echo \"ALTER USER postgres WITH PASSWORD '\$POSTGRES_PASSWORD';\" | su postgres -c \"psql\"" >> /usr/local/bin/root-setup.sh && \
-    echo "echo \"\"" >> /usr/local/bin/root-setup.sh && \
     echo "" >> /usr/local/bin/root-setup.sh && \
     rm -rf /tmp/* && \
     date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
