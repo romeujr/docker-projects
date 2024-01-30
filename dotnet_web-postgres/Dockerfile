@@ -6,6 +6,7 @@ RUN apt update && \
     apt install -y \
     postgresql \
     postgresql-contrib && \
+    su - postgres -c "cp -r /var/lib/postgresql/15/main /var/lib/postgresql/15/start" && \
     echo "listen_addresses = '*'" >> /etc/postgresql/15/main/postgresql.conf && \
     echo "host    all             all             172.17.0.1/24           md5" >> /etc/postgresql/15/main/pg_hba.conf && \
     echo "if [ \"\$POSTGRES_PASSWORD\" = \"\" ]; then" >> /usr/local/bin/root-setup.sh && \

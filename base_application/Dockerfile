@@ -28,6 +28,9 @@ RUN apt update && \
     echo "        --path=*)" >> /usr/local/bin/user-run.sh && \
     echo "            path=\"\${1#*=}\"" >> /usr/local/bin/user-run.sh && \
     echo "            ;;" >> /usr/local/bin/user-run.sh && \
+    echo "        --params=*)" >> /usr/local/bin/user-run.sh && \
+    echo "            params=\"\${1#*=}\"" >> /usr/local/bin/user-run.sh && \
+    echo "            ;;" >> /usr/local/bin/user-run.sh && \
     echo "        *)" >> /usr/local/bin/user-run.sh && \
     echo "            ;;" >> /usr/local/bin/user-run.sh && \
     echo "    esac" >> /usr/local/bin/user-run.sh && \
@@ -43,9 +46,7 @@ RUN apt update && \
     echo "    chmod 550 \"\$path\"" >> /usr/local/bin/user-run.sh && \
     echo "    chmod 550 \"\$path/run.sh\"" >> /usr/local/bin/user-run.sh && \
     echo "    dos2unix \"\$path/run.sh\" >> /dev/null 2>&1" >> /usr/local/bin/user-run.sh && \
-    echo "    echo \"\"" >> /usr/local/bin/user-run.sh && \
-    echo "    su - \"\$user\" -c \"\$path/run.sh\"" >> /usr/local/bin/user-run.sh && \
-    echo "    echo \"\"" >> /usr/local/bin/user-run.sh && \
+    echo "    su - \"\$user\" -c \"\$path/run.sh \$params\"" >> /usr/local/bin/user-run.sh && \
     echo "  fi" >> /usr/local/bin/user-run.sh && \
     echo "fi" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
@@ -58,11 +59,17 @@ RUN apt update && \
     chmod 550 /usr/local/bin/root-setup.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
-    echo "/usr/local/bin/root-setup.sh" >> /usr/local/bin/main-run.sh && \
-    echo "" >> /usr/local/bin/main-run.sh && \
-    echo "/usr/local/bin/custom-run.sh" >> /usr/local/bin/main-run.sh && \
-    echo "" >> /usr/local/bin/main-run.sh && \
-    echo "/usr/local/bin/user-run.sh --user=\"user\" --path=\"/app/user\"" >> /usr/local/bin/main-run.sh && \
+    echo "echo \"\"" >> /usr/local/bin/main-run.sh && \
+    echo "/usr/local/bin/root-setup.sh \$*" >> /usr/local/bin/main-run.sh && \
+    echo "if [ \$? -eq 0 ]; then" >> /usr/local/bin/main-run.sh && \
+    echo "  echo \"\"" >> /usr/local/bin/main-run.sh && \
+    echo "  /usr/local/bin/custom-run.sh \$*" >> /usr/local/bin/main-run.sh && \
+    echo "  if [ \$? -eq 0 ]; then" >> /usr/local/bin/main-run.sh && \
+    echo "    echo \"\"" >> /usr/local/bin/main-run.sh && \
+    echo "    /usr/local/bin/user-run.sh --user=\"user\" --path=\"/app/user\" --params=\"\$*\"" >> /usr/local/bin/main-run.sh && \
+    echo "    echo \"\"" >> /usr/local/bin/main-run.sh && \
+    echo "  fi" >> /usr/local/bin/main-run.sh && \
+    echo "fi" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
     chmod 550 /usr/local/bin/main-run.sh && \
     rm -rf /tmp/* && \
