@@ -20,6 +20,20 @@ RUN apt update && \
     echo "  chown postgres /postgres" >> /usr/local/bin/root-setup.sh && \
     echo "  chgrp postgres /postgres" >> /usr/local/bin/root-setup.sh && \
     echo "  chmod 700 /postgres" >> /usr/local/bin/root-setup.sh && \
+    echo "" >> /usr/local/bin/root-setup.sh && \
+    echo "  for param in \"\$@\"; do" >> /usr/local/bin/root-setup.sh && \
+    echo "    if [ \"\$param\" == \"/pg-reset\" ]; then" >> /usr/local/bin/root-setup.sh && \
+    echo "      if [ ! \"\$(ls -A /postgres)\" ]; then" >> /usr/local/bin/root-setup.sh && \
+    echo "        su - postgres -c \"cp -r /var/lib/postgresql/15/start/. /var/lib/postgresql/15/main\"" >> /usr/local/bin/root-setup.sh && \
+    echo "        echo \"Postgress database reset successfully.\"" >> /usr/local/bin/root-setup.sh && \
+    echo "        exit -1" >> /usr/local/bin/root-setup.sh && \
+    echo "      else" >> /usr/local/bin/root-setup.sh && \
+    echo "        echo \"Path not empty: '/postgres'.\"" >> /usr/local/bin/root-setup.sh && \
+    echo "        exit -1" >> /usr/local/bin/root-setup.sh && \
+    echo "      fi" >> /usr/local/bin/root-setup.sh && \
+    echo "      break" >> /usr/local/bin/root-setup.sh && \
+    echo "    fi" >> /usr/local/bin/root-setup.sh && \
+    echo "  done" >> /usr/local/bin/root-setup.sh && \
     echo "else" >> /usr/local/bin/root-setup.sh && \
     echo "  exit -1" >> /usr/local/bin/root-setup.sh && \
     echo "fi" >> /usr/local/bin/root-setup.sh && \
