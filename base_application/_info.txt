@@ -1,0 +1,15 @@
+===============================================================================
+
+docker builder prune
+docker build -t romeujr/base_application:amd64 -f Dockerfile .
+
+===============================================================================
+
+docker push romeujr/base_application:amd64
+docker pull romeujr/base_application:amd64
+
+docker manifest rm romeujr/base_application:latest
+docker manifest create romeujr/base_application:latest romeujr/base_application:amd64 romeujr/base_application:arm64
+docker manifest push romeujr/base_application:latest
+
+===============================================================================
