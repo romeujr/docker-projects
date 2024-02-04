@@ -1,4 +1,5 @@
-FROM romeujr/base_application:amd64 AS base
+ARG BASE_IMAGE
+FROM $BASE_IMAGE AS base
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     libicu_package=$(apt list "libicu*" 2>/dev/null | grep -E "^libicu[0-9]+" | awk '{print $1}' | sort -V | tail -n 1) && \

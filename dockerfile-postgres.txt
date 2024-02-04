@@ -1,6 +1,7 @@
-FROM romeujr/dotnet_web:amd64 AS base
-ENV DEBIAN_FRONTEND=noninteractive
+ARG BASE_IMAGE
 ARG POSTGRES_PASSWORD
+FROM $BASE_IMAGE AS base
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
     postgresql \
