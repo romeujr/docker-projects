@@ -16,9 +16,6 @@ RUN apt update && \
     chmod 550 /usr/local/bin/check-mounting-path.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
-    echo "user=\"\"" >> /usr/local/bin/user-run.sh && \
-    echo "path=\"\"" >> /usr/local/bin/user-run.sh && \
-    echo "" >> /usr/local/bin/user-run.sh && \
     echo "while [[ \$# -gt 0 ]]; do" >> /usr/local/bin/user-run.sh && \
     echo "    case \"\$1\" in" >> /usr/local/bin/user-run.sh && \
     echo "        --user=*)" >> /usr/local/bin/user-run.sh && \
@@ -36,7 +33,7 @@ RUN apt update && \
     echo "    shift" >> /usr/local/bin/user-run.sh && \
     echo "done" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
-    echo "if [ -d \"\$path\" ]; then" >> /usr/local/bin/user-run.sh && \
+    echo "if [ -n \"\$user\" ] && [ -d \"\$path\" ]; then" >> /usr/local/bin/user-run.sh && \
     echo "  if [ -f \"\$path/run.sh\" ]; then" >> /usr/local/bin/user-run.sh && \
     echo "    chown -R \"\$user\" \"\$path\"" >> /usr/local/bin/user-run.sh && \
     echo "    chgrp -R \"\$user\" \"\$path\"" >> /usr/local/bin/user-run.sh && \
