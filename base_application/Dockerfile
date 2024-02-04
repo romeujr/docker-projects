@@ -1,6 +1,5 @@
 FROM debian:bookworm-slim AS base
 ENV DEBIAN_FRONTEND=noninteractive
-LABEL maintainer.0="Romeu Junior (https://github.com/romeujr/docker-projects)"
 RUN apt update && \
     apt install -y \
     dos2unix && \
