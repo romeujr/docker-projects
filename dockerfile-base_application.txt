@@ -1,7 +1,9 @@
 FROM debian:bookworm-slim AS base
+ARG EXTRA_PACKAGES
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
+    $EXTRA_PACKAGES \
     dos2unix && \
     adduser --disabled-password --gecos "" user && \
     echo "#!/bin/bash" >> /usr/local/bin/check-mounting-path.sh && \

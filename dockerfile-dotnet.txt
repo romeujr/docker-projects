@@ -1,10 +1,12 @@
 ARG BASE_IMAGE
 FROM $BASE_IMAGE AS base
+ARG EXTRA_PACKAGES
 ARG DOTNET_ARGS
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     libicu_package=$(apt list "libicu*" 2>/dev/null | grep -E "^libicu[0-9]+" | awk '{print $1}' | sort -V | tail -n 1) && \
     apt install -y \
+    $EXTRA_PACKAGES \
     wget \
     $libicu_package && \
     wget https://dot.net/v1/dotnet-install.sh -O /tmp/dotnet-install.sh && \

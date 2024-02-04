@@ -6,13 +6,17 @@ docker builder prune
 
 docker build -t romeujr/base_application:amd64 -f ./dockerfile-base_application.txt .
 docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg DOTNET_ARGS="--runtime aspnetcore --version 6.0.26" -t romeujr/dotnet_web:amd64 -f ./dockerfile-dotnet.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg DOTNET_ARGS="--version 6.0.418" -t romeujr/dotnet_sdk:amd64 -f ./dockerfile-dotnet.txt .
 docker build --build-arg BASE_IMAGE=romeujr/dotnet_web:amd64 -t romeujr/dotnet_web-postgres:amd64 -f ./dockerfile-postgres.txt .
+docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:amd64 --build-arg=EXTRA_PACKAGES="awscli git" --build-arg NODEJS_ARGS="20" -t romeujr/devops-aws-dotnet_sdk-git-nodejs-python:amd64 -f ./dockerfile-nodejs.txt .
 
 ===============================================================================
 
 docker build -t romeujr/base_application:arm64 -f ./dockerfile-base_application.txt .
 docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg DOTNET_ARGS="--runtime aspnetcore --version 6.0.26" -t romeujr/dotnet_web:arm64 -f ./dockerfile-dotnet.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg DOTNET_ARGS="--version 6.0.418" -t romeujr/dotnet_sdk:arm64 -f ./dockerfile-dotnet.txt .
 docker build --build-arg BASE_IMAGE=romeujr/dotnet_web:arm64 -t romeujr/dotnet_web-postgres:arm64 -f ./dockerfile-postgres.txt .
+docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:arm64 --build-arg=EXTRA_PACKAGES="awscli git" --build-arg NODEJS_ARGS="20" -t romeujr/devops-aws-dotnet_sdk-git-nodejs-python:arm64 -f ./dockerfile-nodejs.txt .
 
 ===============================================================================
 

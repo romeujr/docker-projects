@@ -1,9 +1,11 @@
 ARG BASE_IMAGE
-ARG POSTGRES_PASSWORD
 FROM $BASE_IMAGE AS base
+ARG EXTRA_PACKAGES
+ARG POSTGRES_PASSWORD
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
+    $EXTRA_PACKAGES \
     postgresql \
     postgresql-contrib && \
     su - postgres -c "mv /var/lib/postgresql/15/main /var/lib/postgresql/15/start" && \

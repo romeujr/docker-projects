@@ -1,0 +1,20 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE AS base
+ARG EXTRA_PACKAGES
+ARG NODEJS_ARGS
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && \
+    apt install -y \
+    $EXTRA_PACKAGES \
+    wget && \
+    wget https://deb.nodesource.com/nsolid_setup_deb.sh -O /tmp/nsolid_setup_deb.sh && \
+    chmod 755 /tmp/nsolid_setup_deb.sh && \
+    if [ ! -n "$NODEJS_ARGS" ]; then echo "Build arg 'NODEJS_ARGS' is missing."; exit -1; fi && \
+    /tmp/nsolid_setup_deb.sh $NODEJS_ARGS && \
+    apt update && \
+    apt install -y \
+    nodejs && \
+    npm install -g npm && \
+    rm -rf /tmp/* && \
+    date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
+ENTRYPOINT ["/usr/local/bin/main-run.sh"]
