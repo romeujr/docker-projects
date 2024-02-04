@@ -4,11 +4,10 @@ LABEL maintainer.0="Romeu Junior (https://github.com/romeujr/docker-projects)"
 RUN apt update && \
     apt install -y \
     wget && \
-    wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb && \
-    dpkg -i /tmp/packages-microsoft-prod.deb && \
-    apt update && \
-    apt install -y \
-    aspnetcore-runtime-6.0 && \
+    wget https://dot.net/v1/dotnet-install.sh -O /tmp/dotnet-install.sh && \
+    chmod 755 /tmp/dotnet-install.sh && \
+    /tmp/dotnet-install.sh --runtime aspnetcore --version 6.0.26 --install-dir /usr/share/dotnet && \
+    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
     rm -rf /tmp/* && \
     date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
 ENTRYPOINT ["/usr/local/bin/main-run.sh"]
