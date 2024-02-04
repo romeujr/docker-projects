@@ -1,5 +1,6 @@
 ARG BASE_IMAGE
 FROM $BASE_IMAGE AS base
+ARG DOTNET_ARGS
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     libicu_package=$(apt list "libicu*" 2>/dev/null | grep -E "^libicu[0-9]+" | awk '{print $1}' | sort -V | tail -n 1) && \
@@ -8,7 +9,8 @@ RUN apt update && \
     $libicu_package && \
     wget https://dot.net/v1/dotnet-install.sh -O /tmp/dotnet-install.sh && \
     chmod 755 /tmp/dotnet-install.sh && \
-    /tmp/dotnet-install.sh --runtime aspnetcore --version 6.0.26 --install-dir /usr/share/dotnet && \
+    if [ ! -n "$DOTNET_ARGS" ]; then echo "Build arg 'DOTNET_ARGS' is missing."; exit -1; fi && \
+    /tmp/dotnet-install.sh $DOTNET_ARGS --install-dir /usr/share/dotnet && \
     ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
     rm -rf /tmp/* && \
     date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
