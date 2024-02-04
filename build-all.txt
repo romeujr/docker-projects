@@ -1,0 +1,44 @@
+===============================================================================
+
+docker builder prune
+
+===============================================================================
+
+docker build -t romeujr/base_application:amd64 -f ./base_application/Dockerfile .
+docker build -t romeujr/dotnet_web:amd64 -f ./dotnet_web/Dockerfile .
+docker build -t romeujr/dotnet_web-postgres:amd64 -f ./dotnet_web-postgres/Dockerfile .
+
+===============================================================================
+
+docker build -t romeujr/base_application:arm64 -f ./base_application/Dockerfile .
+docker build -t romeujr/dotnet_web:arm64 -f ./dotnet_web/Dockerfile .
+docker build -t romeujr/dotnet_web-postgres:arm64 -f ./dotnet_web-postgres/Dockerfile .
+
+===============================================================================
+
+docker push romeujr/base_application:amd64
+docker push romeujr/base_application:arm64
+
+docker manifest rm romeujr/base_application:latest
+docker manifest create romeujr/base_application:latest romeujr/base_application:amd64 romeujr/base_application:arm64
+docker manifest push romeujr/base_application:latest
+
+===============================================================================
+
+docker push romeujr/dotnet_web:amd64
+docker push romeujr/dotnet_web:arm64
+
+docker manifest rm romeujr/dotnet_web:latest
+docker manifest create romeujr/dotnet_web:latest romeujr/dotnet_web:amd64 romeujr/dotnet_web:arm64
+docker manifest push romeujr/dotnet_web:latest
+
+===============================================================================
+
+docker push romeujr/dotnet_web-postgres:amd64
+docker push romeujr/dotnet_web-postgres:arm64
+
+docker manifest rm romeujr/dotnet_web-postgres:latest
+docker manifest create romeujr/dotnet_web-postgres:latest romeujr/dotnet_web-postgres:amd64 romeujr/dotnet_web-postgres:arm64
+docker manifest push romeujr/dotnet_web-postgres:latest
+
+===============================================================================
