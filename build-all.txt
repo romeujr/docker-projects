@@ -23,26 +23,35 @@ docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:arm64 --build-arg=EXTRA_P
 docker push romeujr/base_application:amd64
 docker push romeujr/base_application:arm64
 
-docker manifest rm romeujr/base_application:latest
-docker manifest create romeujr/base_application:latest romeujr/base_application:amd64 romeujr/base_application:arm64
-docker manifest push romeujr/base_application:latest
-
-===============================================================================
-
 docker push romeujr/dotnet_web:amd64
 docker push romeujr/dotnet_web:arm64
 
-docker manifest rm romeujr/dotnet_web:latest
-docker manifest create romeujr/dotnet_web:latest romeujr/dotnet_web:amd64 romeujr/dotnet_web:arm64
-docker manifest push romeujr/dotnet_web:latest
-
-===============================================================================
+docker push romeujr/dotnet_sdk:amd64
+docker push romeujr/dotnet_sdk:arm64
 
 docker push romeujr/dotnet_web-postgres:amd64
 docker push romeujr/dotnet_web-postgres:arm64
 
-docker manifest rm romeujr/dotnet_web-postgres:latest
-docker manifest create romeujr/dotnet_web-postgres:latest romeujr/dotnet_web-postgres:amd64 romeujr/dotnet_web-postgres:arm64
-docker manifest push romeujr/dotnet_web-postgres:latest
+docker push romeujr/devops-aws-dotnet_sdk-git-nodejs-python:amd64
+docker push romeujr/devops-aws-dotnet_sdk-git-nodejs-python:arm64
+
+===============================================================================
+
+#!/bin/bash
+
+DOCKER_MANIFEST=$1
+echo $DOCKER_MANIFEST
+
+docker manifest rm $DOCKER_MANIFEST:latest
+docker manifest create $DOCKER_MANIFEST:latest $DOCKER_MANIFEST:amd64 $DOCKER_MANIFEST:arm64
+docker manifest push $DOCKER_MANIFEST:latest
+
+===============================================================================
+
+./docker-manifest.sh romeujr/base_application
+./docker-manifest.sh romeujr/dotnet_web
+./docker-manifest.sh romeujr/dotnet_sdk
+./docker-manifest.sh romeujr/dotnet_web-postgres
+./docker-manifest.sh romeujr/devops-aws-dotnet_sdk-git-nodejs-python
 
 ===============================================================================
