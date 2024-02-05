@@ -44,7 +44,7 @@ RUN apt update && \
     echo "    chmod 550 \"\$path\"" >> /usr/local/bin/user-run.sh && \
     echo "    chmod 550 \"\$path/run.sh\"" >> /usr/local/bin/user-run.sh && \
     echo "    dos2unix \"\$path/run.sh\" >> /dev/null 2>&1" >> /usr/local/bin/user-run.sh && \
-    echo "    su - \"\$user\" -c \"\$path/run.sh \$params\"" >> /usr/local/bin/user-run.sh && \
+    echo "    su - \"\$user\" -c \"eval \\\"\\\$(awk -F= 'NR==FNR {env_vars[\\\$1]=\\\$0; next} {delete env_vars[\\\$1]} END {for (var in env_vars) print \\\"export \\\" env_vars[var]}' /var/root_env.txt <(set))\\\" && \$path/run.sh \$params\"" >> /usr/local/bin/user-run.sh && \
     echo "  fi" >> /usr/local/bin/user-run.sh && \
     echo "fi" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
@@ -56,6 +56,8 @@ RUN apt update && \
     echo "" >> /usr/local/bin/root-setup.sh && \
     chmod 550 /usr/local/bin/root-setup.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/main-run.sh && \
+    echo "" >> /usr/local/bin/main-run.sh && \
+    echo "env > /var/root_env.txt" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
     echo "echo \"\"" >> /usr/local/bin/main-run.sh && \
     echo "/usr/local/bin/root-setup.sh \$*" >> /usr/local/bin/main-run.sh && \
