@@ -8,11 +8,51 @@ RUN apt update && \
     adduser --disabled-password --gecos "" user && \
     echo "#!/bin/bash" >> /usr/local/bin/check-mounting-path.sh && \
     echo "" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "if ! grep -qs \"\$1 \" /proc/mounts; then" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "while [[ \$# -gt 0 ]]; do" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "    case \"\$1\" in" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "        --user=*)" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "            user=\"\${1#*=}\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "            ;;" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "        --path=*)" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "            path=\"\${1#*=}\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "            ;;" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "        --chmod=*)" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "            chmod=\"\${1#*=}\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "            ;;" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "        *)" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "            ;;" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "    esac" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "    shift" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "done" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "if [ -z \"\$path\" ]; then" >> /usr/local/bin/check-mounting-path.sh && \
     echo "  echo \"\"" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "  echo \"ERROR: Missing mounting path '\$1'.\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  echo \"ERROR: Missing path parameter (--path).\"" >> /usr/local/bin/check-mounting-path.sh && \
     echo "  echo \"\"" >> /usr/local/bin/check-mounting-path.sh && \
     echo "  exit -1" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "fi" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "if [ ! -d \"\$path\" ]; then" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  echo \"\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  echo \"ERROR: Path not found ('\$path').\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  echo \"\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  exit -1" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "fi" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "if [ ! \"\$(grep \"\$path \" /proc/mounts)\" ]; then" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  echo \"\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  echo \"ERROR: Path not mounted ('\$path').\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  echo \"\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  exit -1" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "fi" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "if [ -n \"\$user\" ] && [ -d \"\$path\" ]; then" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  chown -R \"\$user\" \"\$path\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  chgrp -R \"\$user\" \"\$path\"" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "fi" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "if [ -n \"\$chmod\" ]; then" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "  chmod \$chmod \"\$path\"" >> /usr/local/bin/check-mounting-path.sh && \
     echo "fi" >> /usr/local/bin/check-mounting-path.sh && \
     echo "" >> /usr/local/bin/check-mounting-path.sh && \
     chmod 550 /usr/local/bin/check-mounting-path.sh && \

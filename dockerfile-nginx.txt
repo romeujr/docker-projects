@@ -5,29 +5,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
     $EXTRA_PACKAGES \
-    nginx && \
-    mv /etc/nginx /etc/nginx-start && \
-    ln -s /nginx /etc/nginx && \
-    echo "/usr/local/bin/check-mounting-path.sh \"/nginx\"" >> /usr/local/bin/root-setup.sh && \
-    echo "if [ \$? -eq 0 ]; then" >> /usr/local/bin/root-setup.sh && \
-    echo "  chown root /nginx" >> /usr/local/bin/root-setup.sh && \
-    echo "  chgrp root /nginx" >> /usr/local/bin/root-setup.sh && \
-    echo "  chmod 755 /nginx" >> /usr/local/bin/root-setup.sh && \
-    echo "" >> /usr/local/bin/root-setup.sh && \
-    echo "  for param in \"\$@\"; do" >> /usr/local/bin/root-setup.sh && \
-    echo "    if [ \"\$param\" == \"/nginx-reset\" ]; then" >> /usr/local/bin/root-setup.sh && \
-    echo "      if [ ! \"\$(ls -A /nginx)\" ]; then" >> /usr/local/bin/root-setup.sh && \
-    echo "        cp -r /etc/nginx-start/. /etc/nginx" >> /usr/local/bin/root-setup.sh && \
-    echo "        echo \"Nginx reset successfully.\"" >> /usr/local/bin/root-setup.sh && \
-    echo "        exit -1" >> /usr/local/bin/root-setup.sh && \
-    echo "      else" >> /usr/local/bin/root-setup.sh && \
-    echo "        echo \"Path not empty: '/nginx'.\"" >> /usr/local/bin/root-setup.sh && \
-    echo "        exit -1" >> /usr/local/bin/root-setup.sh && \
-    echo "      fi" >> /usr/local/bin/root-setup.sh && \
-    echo "      break" >> /usr/local/bin/root-setup.sh && \
-    echo "    fi" >> /usr/local/bin/root-setup.sh && \
-    echo "  done" >> /usr/local/bin/root-setup.sh && \
-    echo "else" >> /usr/local/bin/root-setup.sh && \
+    nginx \
+    nginx-extras && \
+    rm -rf /etc/nginx/conf.d && \
+    mkdir /nginx && \
+    ln -s /nginx /etc/nginx/conf.d && \
+    sed -i 's/# server_tokens off;/server_tokens off;\n        more_clear_headers Server;/' /etc/nginx/nginx.conf && \
+    echo "/usr/local/bin/check-mounting-path.sh --path=\"/nginx\" --user=\"root\" --chmod=755" >> /usr/local/bin/root-setup.sh && \
+    echo "if [ \$? -ne 0 ]; then" >> /usr/local/bin/root-setup.sh && \
     echo "  exit -1" >> /usr/local/bin/root-setup.sh && \
     echo "fi" >> /usr/local/bin/root-setup.sh && \
     echo "" >> /usr/local/bin/root-setup.sh && \
