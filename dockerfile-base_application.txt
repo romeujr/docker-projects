@@ -6,24 +6,40 @@ RUN apt update && \
     $EXTRA_PACKAGES \
     dos2unix && \
     adduser --disabled-password --gecos "" user && \
+    echo "#!/bin/bash" >> /usr/local/bin/wait-for-interruption.sh && \
+    echo "" >> /usr/local/bin/wait-for-interruption.sh && \
+    echo "while sleep 1; do :; done" >> /usr/local/bin/wait-for-interruption.sh && \
+    echo "" >> /usr/local/bin/wait-for-interruption.sh && \
+    chmod 554 /usr/local/bin/wait-for-interruption.sh && \
+    echo "#!/bin/bash" >> /usr/local/bin/list-parameters.sh && \
+    echo "" >> /usr/local/bin/list-parameters.sh && \
+    echo "list=()" >> /usr/local/bin/list-parameters.sh && \
+    echo "prefix=\$1" >> /usr/local/bin/list-parameters.sh && \
+    echo "" >> /usr/local/bin/list-parameters.sh && \
+    echo "if [ -z \"\$prefix\" ]; then" >> /usr/local/bin/list-parameters.sh && \
+    echo "  echo \"First parameter must be the prefix.\"" >> /usr/local/bin/list-parameters.sh && \
+    echo "  exit -1" >> /usr/local/bin/list-parameters.sh && \
+    echo "fi" >> /usr/local/bin/list-parameters.sh && \
+    echo "" >> /usr/local/bin/list-parameters.sh && \
+    echo "for parameter in \"\$@\"" >> /usr/local/bin/list-parameters.sh && \
+    echo "do" >> /usr/local/bin/list-parameters.sh && \
+    echo "  if [[ \$parameter != \$prefix ]] && [[ \$parameter == \$prefix* ]]; then" >> /usr/local/bin/list-parameters.sh && \
+    echo "    value=\"\${parameter#\$prefix}\"" >> /usr/local/bin/list-parameters.sh && \
+    echo "    if [[ \$value != \$prefix* ]]; then" >> /usr/local/bin/list-parameters.sh && \
+    echo "      list+=(\"\${parameter#\$prefix}\")" >> /usr/local/bin/list-parameters.sh && \
+    echo "    fi" >> /usr/local/bin/list-parameters.sh && \
+    echo "  fi" >> /usr/local/bin/list-parameters.sh && \
+    echo "done" >> /usr/local/bin/list-parameters.sh && \
+    echo "" >> /usr/local/bin/list-parameters.sh && \
+    echo "for parameter in \"\${list[@]}\"" >> /usr/local/bin/list-parameters.sh && \
+    echo "do" >> /usr/local/bin/list-parameters.sh && \
+    echo "  echo \"\$parameter\"" >> /usr/local/bin/list-parameters.sh && \
+    echo "done" >> /usr/local/bin/list-parameters.sh && \
+    echo "" >> /usr/local/bin/list-parameters.sh && \
+    chmod 554 /usr/local/bin/list-parameters.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/check-mounting-path.sh && \
     echo "" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "while [[ \$# -gt 0 ]]; do" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "    case \"\$1\" in" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "        --user=*)" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "            user=\"\${1#*=}\"" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "            ;;" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "        --path=*)" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "            path=\"\${1#*=}\"" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "            ;;" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "        --chmod=*)" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "            chmod=\"\${1#*=}\"" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "            ;;" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "        *)" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "            ;;" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "    esac" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "    shift" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "done" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "\$(/usr/local/bin/list-parameters.sh \"--\" \$* | while IFS= read -r value; do echo \"export \$value\"; done)" >> /usr/local/bin/check-mounting-path.sh && \
     echo "" >> /usr/local/bin/check-mounting-path.sh && \
     echo "if [ -z \"\$path\" ]; then" >> /usr/local/bin/check-mounting-path.sh && \
     echo "  echo \"\"" >> /usr/local/bin/check-mounting-path.sh && \
@@ -55,25 +71,10 @@ RUN apt update && \
     echo "  chmod \$chmod \"\$path\"" >> /usr/local/bin/check-mounting-path.sh && \
     echo "fi" >> /usr/local/bin/check-mounting-path.sh && \
     echo "" >> /usr/local/bin/check-mounting-path.sh && \
-    chmod 550 /usr/local/bin/check-mounting-path.sh && \
+    chmod 554 /usr/local/bin/check-mounting-path.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
-    echo "while [[ \$# -gt 0 ]]; do" >> /usr/local/bin/user-run.sh && \
-    echo "    case \"\$1\" in" >> /usr/local/bin/user-run.sh && \
-    echo "        --user=*)" >> /usr/local/bin/user-run.sh && \
-    echo "            user=\"\${1#*=}\"" >> /usr/local/bin/user-run.sh && \
-    echo "            ;;" >> /usr/local/bin/user-run.sh && \
-    echo "        --path=*)" >> /usr/local/bin/user-run.sh && \
-    echo "            path=\"\${1#*=}\"" >> /usr/local/bin/user-run.sh && \
-    echo "            ;;" >> /usr/local/bin/user-run.sh && \
-    echo "        --params=*)" >> /usr/local/bin/user-run.sh && \
-    echo "            params=\"\${1#*=}\"" >> /usr/local/bin/user-run.sh && \
-    echo "            ;;" >> /usr/local/bin/user-run.sh && \
-    echo "        *)" >> /usr/local/bin/user-run.sh && \
-    echo "            ;;" >> /usr/local/bin/user-run.sh && \
-    echo "    esac" >> /usr/local/bin/user-run.sh && \
-    echo "    shift" >> /usr/local/bin/user-run.sh && \
-    echo "done" >> /usr/local/bin/user-run.sh && \
+    echo "\$(/usr/local/bin/list-parameters.sh \"--\" \$* | while IFS= read -r value; do echo \"export \$value\"; done)" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
     echo "if [ -n \"\$user\" ] && [ -d \"\$path\" ]; then" >> /usr/local/bin/user-run.sh && \
     echo "  if [ -f \"\$path/run.sh\" ]; then" >> /usr/local/bin/user-run.sh && \
@@ -88,13 +89,17 @@ RUN apt update && \
     echo "  fi" >> /usr/local/bin/user-run.sh && \
     echo "fi" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
-    chmod 550 /usr/local/bin/user-run.sh && \
+    chmod 554 /usr/local/bin/user-run.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/custom-run.sh && \
     echo "" >> /usr/local/bin/custom-run.sh && \
-    chmod 550 /usr/local/bin/custom-run.sh && \
+    echo "\$(/usr/local/bin/list-parameters.sh \"--\" \$* | while IFS= read -r value; do echo \"export \$value\"; done)" >> /usr/local/bin/custom-run.sh && \
+    echo "" >> /usr/local/bin/custom-run.sh && \
+    chmod 554 /usr/local/bin/custom-run.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/root-setup.sh && \
     echo "" >> /usr/local/bin/root-setup.sh && \
-    chmod 550 /usr/local/bin/root-setup.sh && \
+    echo "\$(/usr/local/bin/list-parameters.sh \"--\" \$* | while IFS= read -r value; do echo \"export \$value\"; done)" >> /usr/local/bin/root-setup.sh && \
+    echo "" >> /usr/local/bin/root-setup.sh && \
+    chmod 554 /usr/local/bin/root-setup.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
     echo "env > /var/root_env.txt" >> /usr/local/bin/main-run.sh && \
@@ -111,7 +116,13 @@ RUN apt update && \
     echo "  fi" >> /usr/local/bin/main-run.sh && \
     echo "fi" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
-    chmod 550 /usr/local/bin/main-run.sh && \
+    echo "for param in \"\$@\"; do" >> /usr/local/bin/main-run.sh && \
+    echo "  if [ \"\$param\" == \"/wait\" ]; then" >> /usr/local/bin/main-run.sh && \
+    echo "    /usr/local/bin/wait-for-interruption.sh" >> /usr/local/bin/main-run.sh && \
+    echo "  fi" >> /usr/local/bin/main-run.sh && \
+    echo "done" >> /usr/local/bin/main-run.sh && \
+    echo "" >> /usr/local/bin/main-run.sh && \
+    chmod 554 /usr/local/bin/main-run.sh && \
     rm -rf /tmp/* && \
     date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
 ENTRYPOINT ["/usr/local/bin/main-run.sh"]
