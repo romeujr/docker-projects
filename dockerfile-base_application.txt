@@ -10,7 +10,28 @@ RUN apt update && \
     echo "" >> /usr/local/bin/wait-for-interruption.sh && \
     echo "while sleep 1; do :; done" >> /usr/local/bin/wait-for-interruption.sh && \
     echo "" >> /usr/local/bin/wait-for-interruption.sh && \
-    chmod 554 /usr/local/bin/wait-for-interruption.sh && \
+    chmod 555 /usr/local/bin/wait-for-interruption.sh && \
+    echo "#!/bin/bash" >> /usr/local/bin/parameter-count.sh && \
+    echo "" >> /usr/local/bin/parameter-count.sh && \
+    echo "target=\$1" >> /usr/local/bin/parameter-count.sh && \
+    echo "" >> /usr/local/bin/parameter-count.sh && \
+    echo "get_counter() {" >> /usr/local/bin/parameter-count.sh && \
+    echo "  local index=0" >> /usr/local/bin/parameter-count.sh && \
+    echo "  local result=0" >> /usr/local/bin/parameter-count.sh && \
+    echo "" >> /usr/local/bin/parameter-count.sh && \
+    echo "  for arg in \"\$@\"; do" >> /usr/local/bin/parameter-count.sh && \
+    echo "    ((index++))" >> /usr/local/bin/parameter-count.sh && \
+    echo "    if [ \$index -ge 2 ] && [ \$arg = \$target ]; then" >> /usr/local/bin/parameter-count.sh && \
+    echo "      ((result++))" >> /usr/local/bin/parameter-count.sh && \
+    echo "    fi" >> /usr/local/bin/parameter-count.sh && \
+    echo "  done" >> /usr/local/bin/parameter-count.sh && \
+    echo "" >> /usr/local/bin/parameter-count.sh && \
+    echo "  echo \$result;" >> /usr/local/bin/parameter-count.sh && \
+    echo "}" >> /usr/local/bin/parameter-count.sh && \
+    echo "" >> /usr/local/bin/parameter-count.sh && \
+    echo "get_counter \$*" >> /usr/local/bin/parameter-count.sh && \
+    echo "" >> /usr/local/bin/parameter-count.sh && \
+    chmod 555 /usr/local/bin/parameter-count.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/list-parameters.sh && \
     echo "" >> /usr/local/bin/list-parameters.sh && \
     echo "list=()" >> /usr/local/bin/list-parameters.sh && \
@@ -36,10 +57,35 @@ RUN apt update && \
     echo "  echo \"\$parameter\"" >> /usr/local/bin/list-parameters.sh && \
     echo "done" >> /usr/local/bin/list-parameters.sh && \
     echo "" >> /usr/local/bin/list-parameters.sh && \
-    chmod 554 /usr/local/bin/list-parameters.sh && \
+    chmod 555 /usr/local/bin/list-parameters.sh && \
+    echo "#!/bin/bash" >> /usr/local/bin/export-parameters.sh && \
+    echo "" >> /usr/local/bin/export-parameters.sh && \
+    echo "extract_variable_name() {" >> /usr/local/bin/export-parameters.sh && \
+    echo "  local string=\"\$1\"" >> /usr/local/bin/export-parameters.sh && \
+    echo "  local delimiter=\"=\"" >> /usr/local/bin/export-parameters.sh && \
+    echo "  local result=\$(echo \"\$string\" | cut -d\"\$delimiter\" -f1)" >> /usr/local/bin/export-parameters.sh && \
+    echo "  echo \"\$result\"" >> /usr/local/bin/export-parameters.sh && \
+    echo "}" >> /usr/local/bin/export-parameters.sh && \
+    echo "" >> /usr/local/bin/export-parameters.sh && \
+    echo "export_values() {" >> /usr/local/bin/export-parameters.sh && \
+    echo "  while IFS= read -r value; do" >> /usr/local/bin/export-parameters.sh && \
+    echo "    local name=\$(extract_variable_name \$value)" >> /usr/local/bin/export-parameters.sh && \
+    echo "    if [[ \"\$name\" =~ ^[a-zA-Z_][a-zA-Z0-9_]*\$ ]]; then" >> /usr/local/bin/export-parameters.sh && \
+    echo "      if [[ \"\$value\" == *\"=\"* ]]; then" >> /usr/local/bin/export-parameters.sh && \
+    echo "        echo \"export \$value\"" >> /usr/local/bin/export-parameters.sh && \
+    echo "      else" >> /usr/local/bin/export-parameters.sh && \
+    echo "        echo \"export \$value=\"" >> /usr/local/bin/export-parameters.sh && \
+    echo "      fi;" >> /usr/local/bin/export-parameters.sh && \
+    echo "    fi;" >> /usr/local/bin/export-parameters.sh && \
+    echo "  done" >> /usr/local/bin/export-parameters.sh && \
+    echo "}" >> /usr/local/bin/export-parameters.sh && \
+    echo "" >> /usr/local/bin/export-parameters.sh && \
+    echo "/usr/local/bin/list-parameters.sh \$* | export_values" >> /usr/local/bin/export-parameters.sh && \
+    echo "" >> /usr/local/bin/export-parameters.sh && \
+    chmod 555 /usr/local/bin/export-parameters.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/check-mounting-path.sh && \
     echo "" >> /usr/local/bin/check-mounting-path.sh && \
-    echo "\$(/usr/local/bin/list-parameters.sh \"--\" \$* | while IFS= read -r value; do echo \"export \$value\"; done)" >> /usr/local/bin/check-mounting-path.sh && \
+    echo "\$(/usr/local/bin/export-parameters.sh \"--\" \$*)" >> /usr/local/bin/check-mounting-path.sh && \
     echo "" >> /usr/local/bin/check-mounting-path.sh && \
     echo "if [ -z \"\$path\" ]; then" >> /usr/local/bin/check-mounting-path.sh && \
     echo "  echo \"\"" >> /usr/local/bin/check-mounting-path.sh && \
@@ -74,7 +120,7 @@ RUN apt update && \
     chmod 554 /usr/local/bin/check-mounting-path.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
-    echo "\$(/usr/local/bin/list-parameters.sh \"--\" \$* | while IFS= read -r value; do echo \"export \$value\"; done)" >> /usr/local/bin/user-run.sh && \
+    echo "\$(/usr/local/bin/export-parameters.sh \"--\" \$*)" >> /usr/local/bin/user-run.sh && \
     echo "" >> /usr/local/bin/user-run.sh && \
     echo "if [ -n \"\$user\" ] && [ -d \"\$path\" ]; then" >> /usr/local/bin/user-run.sh && \
     echo "  if [ -f \"\$path/run.sh\" ]; then" >> /usr/local/bin/user-run.sh && \
@@ -92,12 +138,12 @@ RUN apt update && \
     chmod 554 /usr/local/bin/user-run.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/custom-run.sh && \
     echo "" >> /usr/local/bin/custom-run.sh && \
-    echo "\$(/usr/local/bin/list-parameters.sh \"--\" \$* | while IFS= read -r value; do echo \"export \$value\"; done)" >> /usr/local/bin/custom-run.sh && \
+    echo "\$(/usr/local/bin/export-parameters.sh \"--\" \$*)" >> /usr/local/bin/custom-run.sh && \
     echo "" >> /usr/local/bin/custom-run.sh && \
     chmod 554 /usr/local/bin/custom-run.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/root-setup.sh && \
     echo "" >> /usr/local/bin/root-setup.sh && \
-    echo "\$(/usr/local/bin/list-parameters.sh \"--\" \$* | while IFS= read -r value; do echo \"export \$value\"; done)" >> /usr/local/bin/root-setup.sh && \
+    echo "\$(/usr/local/bin/export-parameters.sh \"--\" \$*)" >> /usr/local/bin/root-setup.sh && \
     echo "" >> /usr/local/bin/root-setup.sh && \
     chmod 554 /usr/local/bin/root-setup.sh && \
     echo "#!/bin/bash" >> /usr/local/bin/main-run.sh && \
@@ -116,11 +162,9 @@ RUN apt update && \
     echo "  fi" >> /usr/local/bin/main-run.sh && \
     echo "fi" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
-    echo "for param in \"\$@\"; do" >> /usr/local/bin/main-run.sh && \
-    echo "  if [ \"\$param\" == \"/wait\" ]; then" >> /usr/local/bin/main-run.sh && \
-    echo "    /usr/local/bin/wait-for-interruption.sh" >> /usr/local/bin/main-run.sh && \
-    echo "  fi" >> /usr/local/bin/main-run.sh && \
-    echo "done" >> /usr/local/bin/main-run.sh && \
+    echo "if [ \$(/usr/local/bin/parameter-count.sh \"/wait\" \$*) -ge 1 ]; then" >> /usr/local/bin/main-run.sh && \
+    echo "  /usr/local/bin/wait-for-interruption.sh" >> /usr/local/bin/main-run.sh && \
+    echo "fi" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
     chmod 554 /usr/local/bin/main-run.sh && \
     rm -rf /tmp/* && \
