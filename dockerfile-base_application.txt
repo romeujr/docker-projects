@@ -159,11 +159,11 @@ RUN apt update && \
     echo "    echo \"\"" >> /usr/local/bin/main-run.sh && \
     echo "    /usr/local/bin/user-run.sh --user=\"user\" --path=\"/app/user\" --params=\"\$*\"" >> /usr/local/bin/main-run.sh && \
     echo "    echo \"\"" >> /usr/local/bin/main-run.sh && \
-    echo "  fi" >> /usr/local/bin/main-run.sh && \
-    echo "fi" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
-    echo "if [ \$(/usr/local/bin/parameter-count.sh \"/wait\" \$*) -ge 1 ]; then" >> /usr/local/bin/main-run.sh && \
-    echo "  /usr/local/bin/wait-for-interruption.sh" >> /usr/local/bin/main-run.sh && \
+    echo "    if [ \$(/usr/local/bin/parameter-count.sh \"/wait\" \$*) -ge 1 ]; then" >> /usr/local/bin/main-run.sh && \
+    echo "      /usr/local/bin/wait-for-interruption.sh" >> /usr/local/bin/main-run.sh && \
+    echo "    fi" >> /usr/local/bin/main-run.sh && \
+    echo "  fi" >> /usr/local/bin/main-run.sh && \
     echo "fi" >> /usr/local/bin/main-run.sh && \
     echo "" >> /usr/local/bin/main-run.sh && \
     chmod 554 /usr/local/bin/main-run.sh && \

@@ -6,25 +6,30 @@ docker builder prune
 
 docker build -t romeujr/base_application:amd64 -f ./dockerfile-base_application.txt .
 
-docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 -t romeujr/net_utils:amd64 -f ./dockerfile-net_utils.txt .
-docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64  --build-arg=EXTRA_PACKAGES="openssl curl wget iputils-ping dnsutils telnet" -t romeujr/nginx:amd64 -f ./dockerfile-nginx.txt .
+# docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 -t romeujr/net_utils:amd64 -f ./dockerfile-net_utils.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg=EXTRA_PACKAGES="openssl curl wget iproute2 iputils-ping dnsutils telnet" -t romeujr/nginx:amd64 -f ./dockerfile-nginx.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 -t romeujr/postgres:amd64 -f ./dockerfile-postgres.txt .
 
-docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg DOTNET_ARGS="--runtime aspnetcore --channel 6.0" -t romeujr/dotnet_web:amd64 -f ./dockerfile-dotnet.txt .
-docker build --build-arg BASE_IMAGE=romeujr/dotnet_web:amd64 -t romeujr/dotnet_web-postgres:amd64 -f ./dockerfile-postgres.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg DOTNET_ARGS="--runtime aspnetcore --channel 8.0" -t romeujr/dotnet_web:amd64 -f ./dockerfile-dotnet.txt .
+docker build --build-arg BASE_IMAGE=romeujr/dotnet_web:amd64 -t romeujr/dotnet_web-nginx:amd64 -f ./dockerfile-nginx.txt .
+docker build --build-arg BASE_IMAGE=romeujr/dotnet_web-nginx:amd64 -t romeujr/dotnet_web-nginx-postgres:amd64 -f ./dockerfile-postgres.txt .
 
-docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg DOTNET_ARGS="--channel 6.0" -t romeujr/dotnet_sdk:amd64 -f ./dockerfile-dotnet.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg DOTNET_ARGS="--channel 8.0" -t romeujr/dotnet_sdk:amd64 -f ./dockerfile-dotnet.txt .
 docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:amd64 --build-arg=EXTRA_PACKAGES="awscli git zip unzip" --build-arg NODEJS_ARGS="20" -t romeujr/devops-aws-dotnet_sdk-git-nodejs-python:amd64 -f ./dockerfile-nodejs.txt .
 
 ===============================================================================
 
 docker build -t romeujr/base_application:arm64 -f ./dockerfile-base_application.txt .
 
-docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 -t romeujr/net_utils:arm64 -f ./dockerfile-net_utils.txt .
+# docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 -t romeujr/net_utils:arm64 -f ./dockerfile-net_utils.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg=EXTRA_PACKAGES="openssl curl wget iproute2 iputils-ping dnsutils telnet" -t romeujr/nginx:arm64 -f ./dockerfile-nginx.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 -t romeujr/postgres:arm64 -f ./dockerfile-postgres.txt .
 
-docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg DOTNET_ARGS="--runtime aspnetcore --channel 6.0" -t romeujr/dotnet_web:arm64 -f ./dockerfile-dotnet.txt .
-docker build --build-arg BASE_IMAGE=romeujr/dotnet_web:arm64 -t romeujr/dotnet_web-postgres:arm64 -f ./dockerfile-postgres.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg DOTNET_ARGS="--runtime aspnetcore --channel 8.0" -t romeujr/dotnet_web:arm64 -f ./dockerfile-dotnet.txt .
+docker build --build-arg BASE_IMAGE=romeujr/dotnet_web:arm64 -t romeujr/dotnet_web-nginx:arm64 -f ./dockerfile-nginx.txt .
+docker build --build-arg BASE_IMAGE=romeujr/dotnet_web-nginx:arm64 -t romeujr/dotnet_web-nginx-postgres:arm64 -f ./dockerfile-postgres.txt .
 
-docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg DOTNET_ARGS="--channel 6.0" -t romeujr/dotnet_sdk:arm64 -f ./dockerfile-dotnet.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg DOTNET_ARGS="--channel 8.0" -t romeujr/dotnet_sdk:arm64 -f ./dockerfile-dotnet.txt .
 docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:arm64 --build-arg=EXTRA_PACKAGES="awscli git zip unzip" --build-arg NODEJS_ARGS="20" -t romeujr/devops-aws-dotnet_sdk-git-nodejs-python:arm64 -f ./dockerfile-nodejs.txt .
 
 ===============================================================================
@@ -32,17 +37,26 @@ docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:arm64 --build-arg=EXTRA_P
 docker push romeujr/base_application:amd64
 docker push romeujr/base_application:arm64
 
-docker push romeujr/net_utils:amd64
-docker push romeujr/net_utils:arm64
+# docker push romeujr/net_utils:amd64
+# docker push romeujr/net_utils:arm64
+
+docker push romeujr/nginx:amd64
+docker push romeujr/nginx:arm64
+
+docker push romeujr/postgres:amd64
+docker push romeujr/postgres:arm64
 
 docker push romeujr/dotnet_web:amd64
 docker push romeujr/dotnet_web:arm64
 
+docker push romeujr/dotnet_web-nginx:amd64
+docker push romeujr/dotnet_web-nginx:arm64
+
+docker push romeujr/dotnet_web-nginx-postgres:amd64
+docker push romeujr/dotnet_web-nginx-postgres:arm64
+
 docker push romeujr/dotnet_sdk:amd64
 docker push romeujr/dotnet_sdk:arm64
-
-docker push romeujr/dotnet_web-postgres:amd64
-docker push romeujr/dotnet_web-postgres:arm64
 
 docker push romeujr/devops-aws-dotnet_sdk-git-nodejs-python:amd64
 docker push romeujr/devops-aws-dotnet_sdk-git-nodejs-python:arm64
@@ -61,10 +75,16 @@ docker manifest push $DOCKER_MANIFEST:latest
 ===============================================================================
 
 ./docker-manifest.sh romeujr/base_application
-./docker-manifest.sh romeujr/net_utils
+
+# ./docker-manifest.sh romeujr/net_utils
+./docker-manifest.sh romeujr/nginx
+./docker-manifest.sh romeujr/postgres
+
 ./docker-manifest.sh romeujr/dotnet_web
+./docker-manifest.sh romeujr/dotnet_web-nginx
+./docker-manifest.sh romeujr/dotnet_web-nginx-postgres
+
 ./docker-manifest.sh romeujr/dotnet_sdk
-./docker-manifest.sh romeujr/dotnet_web-postgres
 ./docker-manifest.sh romeujr/devops-aws-dotnet_sdk-git-nodejs-python
 
 ===============================================================================
