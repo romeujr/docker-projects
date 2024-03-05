@@ -7,7 +7,7 @@ docker builder prune
 docker build -t romeujr/base_application:amd64 -f ./dockerfile-base_application.txt .
 
 # docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 -t romeujr/net_utils:amd64 -f ./dockerfile-net_utils.txt .
-docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg=EXTRA_PACKAGES="openssl curl wget iproute2 iputils-ping dnsutils telnet" -t romeujr/nginx:amd64 -f ./dockerfile-nginx.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 -t romeujr/nginx:amd64 -f ./dockerfile-nginx.txt .
 docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 -t romeujr/postgres:amd64 -f ./dockerfile-postgres.txt .
 
 docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg DOTNET_ARGS="--runtime aspnetcore --channel 8.0" -t romeujr/dotnet_web:amd64 -f ./dockerfile-dotnet.txt .
@@ -22,7 +22,7 @@ docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:amd64 --build-arg=EXTRA_P
 docker build -t romeujr/base_application:arm64 -f ./dockerfile-base_application.txt .
 
 # docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 -t romeujr/net_utils:arm64 -f ./dockerfile-net_utils.txt .
-docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg=EXTRA_PACKAGES="openssl curl wget iproute2 iputils-ping dnsutils telnet" -t romeujr/nginx:arm64 -f ./dockerfile-nginx.txt .
+docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 -t romeujr/nginx:arm64 -f ./dockerfile-nginx.txt .
 docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 -t romeujr/postgres:arm64 -f ./dockerfile-postgres.txt .
 
 docker build --build-arg BASE_IMAGE=romeujr/base_application:arm64 --build-arg DOTNET_ARGS="--runtime aspnetcore --channel 8.0" -t romeujr/dotnet_web:arm64 -f ./dockerfile-dotnet.txt .

@@ -5,8 +5,18 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
     $EXTRA_PACKAGES \
+    openssl \
+    curl \
+    wget \
+    iproute2 \
+    iputils-ping \
+    dnsutils \
+    telnet \
     nginx \
-    nginx-extras && \
+    nginx-extras \
+    libnginx-mod-http-js \
+    libnginx-mod-stream-js \
+    njs && \
     rm -rf /etc/nginx/conf.d && \
     mkdir /nginx && \
     ln -s /nginx /etc/nginx/conf.d && \
