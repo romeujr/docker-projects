@@ -15,7 +15,7 @@ docker build --build-arg BASE_IMAGE=romeujr/dotnet_web:amd64 -t romeujr/dotnet_w
 docker build --build-arg BASE_IMAGE=romeujr/dotnet_web-nginx:amd64 -t romeujr/dotnet_web-nginx-postgres:amd64 -f ./dockerfile-postgres.txt .
 
 docker build --build-arg BASE_IMAGE=romeujr/base_application:amd64 --build-arg DOTNET_ARGS="--channel 8.0" -t romeujr/dotnet_sdk:amd64 -f ./dockerfile-dotnet.txt .
-docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:amd64 --build-arg=EXTRA_PACKAGES="awscli git zip unzip" --build-arg NODEJS_ARGS="20" -t romeujr/devops-aws-dotnet_sdk-git-nodejs-python:amd64 -f ./dockerfile-nodejs.txt .
+docker build --build-arg BASE_IMAGE=romeujr/dotnet_sdk:amd64 --build-arg=EXTRA_PACKAGES="awscli python3 git zip unzip" --build-arg NODEJS_ARGS="20" -t romeujr/devops-aws-dotnet_sdk-git-nodejs-python:amd64 -f ./dockerfile-nodejs.txt .
 
 ===============================================================================
 
