@@ -7,27 +7,22 @@ RUN apt update && \
     $EXTRA_PACKAGES \
     openssl \
     curl \
-    wget \
     iproute2 \
     iputils-ping \
     dnsutils \
     telnet \
     nginx \
-    nginx-extras \
-    libnginx-mod-http-js \
-    libnginx-mod-stream-js \
-    njs && \
+    nginx-extras && \
     rm -rf /etc/nginx/conf.d && \
     mkdir /nginx && \
     ln -s /nginx /etc/nginx/conf.d && \
     sed -i 's/# server_tokens off;/server_tokens off;\n        more_clear_headers Server;/' /etc/nginx/nginx.conf && \
-    echo "/usr/local/bin/check-mounting-path.sh --path=\"/nginx\" --user=\"root\" --chmod=755" >> /usr/local/bin/root-setup.sh && \
-    echo "if [ \$? -ne 0 ]; then" >> /usr/local/bin/root-setup.sh && \
-    echo "  exit -1" >> /usr/local/bin/root-setup.sh && \
-    echo "fi" >> /usr/local/bin/root-setup.sh && \
-    echo "" >> /usr/local/bin/root-setup.sh && \
-    echo "service nginx start" >> /usr/local/bin/root-setup.sh && \
-    echo "" >> /usr/local/bin/root-setup.sh && \
-    rm -rf /tmp/* && \
-    date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
+    echo '/usr/local/bin/check-mounting-path.sh --path="/nginx" --user="root" --chmod=755' >> /usr/local/bin/root-setup.sh && \
+    echo 'if [ \$? -ne 0 ]; then' >> /usr/local/bin/root-setup.sh && \
+    echo '  exit -1' >> /usr/local/bin/root-setup.sh && \
+    echo 'fi' >> /usr/local/bin/root-setup.sh && \
+    echo '' >> /usr/local/bin/root-setup.sh && \
+    echo 'service nginx start' >> /usr/local/bin/root-setup.sh && \
+    echo '' >> /usr/local/bin/root-setup.sh && \
+    rm -rf /tmp/*
 ENTRYPOINT ["/usr/local/bin/main-run.sh"]

@@ -10,33 +10,32 @@ RUN apt update && \
     postgresql-contrib && \
     su - postgres -c "mv /var/lib/postgresql/15/main /var/lib/postgresql/15/start" && \
     su - postgres -c "ln -s /postgres /var/lib/postgresql/15/main" && \
-    echo "listen_addresses = '*'" >> /etc/postgresql/15/main/postgresql.conf && \
-    echo "host    all             all             172.17.0.1/24           md5" >> /etc/postgresql/15/main/pg_hba.conf && \
-    echo "if [ \"\$POSTGRES_PASSWORD\" = \"\" ]; then" >> /usr/local/bin/root-setup.sh && \
-    echo "  echo \"You must define the environment variable for 'POSTGRES_PASSWORD'.\"" >> /usr/local/bin/root-setup.sh && \
-    echo "  exit -1" >> /usr/local/bin/root-setup.sh && \
-    echo "fi" >> /usr/local/bin/root-setup.sh && \
-    echo "" >> /usr/local/bin/root-setup.sh && \
-    echo "/usr/local/bin/check-mounting-path.sh --path=\"/postgres\" --user=\"postgres\" --chmod=700" >> /usr/local/bin/root-setup.sh && \
-    echo "if [ \$? -eq 0 ]; then" >> /usr/local/bin/root-setup.sh && \
-    echo "  if [ \$(/usr/local/bin/parameter-count.sh \"/pg-reset\" \$*) -ge 1 ]; then" >> /usr/local/bin/root-setup.sh && \
-    echo "    if [ ! \"\$(ls -A /postgres)\" ]; then" >> /usr/local/bin/root-setup.sh && \
-    echo "      su - postgres -c \"cp -r /var/lib/postgresql/15/start/. /var/lib/postgresql/15/main\"" >> /usr/local/bin/root-setup.sh && \
-    echo "      echo \"Postgress database reset successfully.\"" >> /usr/local/bin/root-setup.sh && \
-    echo "      exit -1" >> /usr/local/bin/root-setup.sh && \
-    echo "    else" >> /usr/local/bin/root-setup.sh && \
-    echo "      echo \"Path not empty: '/postgres'.\"" >> /usr/local/bin/root-setup.sh && \
-    echo "      exit -1" >> /usr/local/bin/root-setup.sh && \
-    echo "    fi" >> /usr/local/bin/root-setup.sh && \
-    echo "    break" >> /usr/local/bin/root-setup.sh && \
-    echo "  fi" >> /usr/local/bin/root-setup.sh && \
-    echo "else" >> /usr/local/bin/root-setup.sh && \
-    echo "  exit -1" >> /usr/local/bin/root-setup.sh && \
-    echo "fi" >> /usr/local/bin/root-setup.sh && \
-    echo "" >> /usr/local/bin/root-setup.sh && \
-    echo "service postgresql start" >> /usr/local/bin/root-setup.sh && \
-    echo "echo \"ALTER USER postgres WITH PASSWORD '\$POSTGRES_PASSWORD';\" | su postgres -c \"psql\"" >> /usr/local/bin/root-setup.sh && \
-    echo "" >> /usr/local/bin/root-setup.sh && \
-    rm -rf /tmp/* && \
-    date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
+    echo 'listen_addresses = '\''*'\''' >> /etc/postgresql/15/main/postgresql.conf && \
+    echo 'host    all             all             172.17.0.1/24           md5' >> /etc/postgresql/15/main/pg_hba.conf && \
+    echo 'if [ -z "$POSTGRES_PASSWORD" ]; then' >> /usr/local/bin/root-setup.sh && \
+    echo '  echo "You must define the environment variable for '\''POSTGRES_PASSWORD'\''."' >> /usr/local/bin/root-setup.sh && \
+    echo '  exit -1' >> /usr/local/bin/root-setup.sh && \
+    echo 'fi' >> /usr/local/bin/root-setup.sh && \
+    echo '' >> /usr/local/bin/root-setup.sh && \
+    echo '/usr/local/bin/check-mounting-path.sh --path="/postgres" --user="postgres" --chmod=700' >> /usr/local/bin/root-setup.sh && \
+    echo 'if [ \$? -eq 0 ]; then' >> /usr/local/bin/root-setup.sh && \
+    echo '  if [ $(/usr/local/bin/parameter-count.sh "/pg-reset" $*) -ge 1 ]; then' >> /usr/local/bin/root-setup.sh && \
+    echo '    if [ ! "$(ls -A /postgres)" ]; then' >> /usr/local/bin/root-setup.sh && \
+    echo '      su - postgres -c "cp -r /var/lib/postgresql/15/start/. /var/lib/postgresql/15/main"' >> /usr/local/bin/root-setup.sh && \
+    echo '      echo "Postgress database reset successfully."' >> /usr/local/bin/root-setup.sh && \
+    echo '      exit -1' >> /usr/local/bin/root-setup.sh && \
+    echo '    else' >> /usr/local/bin/root-setup.sh && \
+    echo '      echo "Path not empty: '\''/postgres'\''."' >> /usr/local/bin/root-setup.sh && \
+    echo '      exit -1' >> /usr/local/bin/root-setup.sh && \
+    echo '    fi' >> /usr/local/bin/root-setup.sh && \
+    echo '    break' >> /usr/local/bin/root-setup.sh && \
+    echo '  fi' >> /usr/local/bin/root-setup.sh && \
+    echo 'else' >> /usr/local/bin/root-setup.sh && \
+    echo '  exit -1' >> /usr/local/bin/root-setup.sh && \
+    echo 'fi' >> /usr/local/bin/root-setup.sh && \
+    echo '' >> /usr/local/bin/root-setup.sh && \
+    echo 'service postgresql start' >> /usr/local/bin/root-setup.sh && \
+    echo 'echo "ALTER USER postgres WITH PASSWORD '\''\$POSTGRES_PASSWORD'\'';" | su postgres -c "psql"' >> /usr/local/bin/root-setup.sh && \
+    echo '' >> /usr/local/bin/root-setup.sh && \
+    rm -rf /tmp/*
 ENTRYPOINT ["/usr/local/bin/main-run.sh"]
