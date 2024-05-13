@@ -18,7 +18,7 @@ RUN apt update && \
     echo 'fi' >> /usr/local/bin/root-setup.sh && \
     echo '' >> /usr/local/bin/root-setup.sh && \
     echo '/usr/local/bin/check-mounting-path.sh --path="/postgres" --user="postgres" --chmod=700' >> /usr/local/bin/root-setup.sh && \
-    echo 'if [ \$? -eq 0 ]; then' >> /usr/local/bin/root-setup.sh && \
+    echo 'if [ $? -eq 0 ]; then' >> /usr/local/bin/root-setup.sh && \
     echo '  if [ $(/usr/local/bin/parameter-count.sh "/pg-reset" $*) -ge 1 ]; then' >> /usr/local/bin/root-setup.sh && \
     echo '    if [ ! "$(ls -A /postgres)" ]; then' >> /usr/local/bin/root-setup.sh && \
     echo '      su - postgres -c "cp -r /var/lib/postgresql/15/start/. /var/lib/postgresql/15/main"' >> /usr/local/bin/root-setup.sh && \
@@ -35,7 +35,7 @@ RUN apt update && \
     echo 'fi' >> /usr/local/bin/root-setup.sh && \
     echo '' >> /usr/local/bin/root-setup.sh && \
     echo 'service postgresql start' >> /usr/local/bin/root-setup.sh && \
-    echo 'echo "ALTER USER postgres WITH PASSWORD '\''\$POSTGRES_PASSWORD'\'';" | su postgres -c "psql"' >> /usr/local/bin/root-setup.sh && \
+    echo 'echo "ALTER USER postgres WITH PASSWORD '\''$POSTGRES_PASSWORD'\'';" | su postgres -c "psql"' >> /usr/local/bin/root-setup.sh && \
     echo '' >> /usr/local/bin/root-setup.sh && \
     rm -rf /tmp/*
 ENTRYPOINT ["/usr/local/bin/main-run.sh"]

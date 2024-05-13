@@ -17,6 +17,5 @@ RUN apt update && \
     telnet \
     netcat-openbsd \
     nmap && \
-    rm -rf /tmp/* && \
-    date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
+    rm -rf /tmp/*
 ENTRYPOINT ["/usr/local/bin/main-run.sh"]

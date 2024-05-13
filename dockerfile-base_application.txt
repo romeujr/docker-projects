@@ -167,6 +167,5 @@ RUN apt update && \
     echo 'fi' >> /usr/local/bin/main-run.sh && \
     echo '' >> /usr/local/bin/main-run.sh && \
     chmod 554 /usr/local/bin/main-run.sh  && \
-    rm -rf /tmp/* && \
-    date +"%Y-%m-%d %H:%M:%S %Z" > /etc/build-date
+    rm -rf /tmp/*
 ENTRYPOINT ["/usr/local/bin/main-run.sh"]
