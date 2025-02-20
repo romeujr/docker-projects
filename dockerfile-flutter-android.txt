@@ -1,0 +1,57 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE AS base
+ARG USERNAME=root
+ARG EXTRA_PACKAGES
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && \
+    apt install -y \
+    $EXTRA_PACKAGES \
+    curl \
+    git \
+    unzip \
+    xz-utils \
+    zip \
+    android-sdk \
+    ninja-build \
+    libgtk-3-dev && \
+    cd /opt && \
+    apt autopurge -y *jdk* && \
+    curl -O https://download.java.net/java/GA/jdk18/43f95e8614114aeaa8e8a5fcf20a682d/36/GPL/openjdk-18_linux-x64_bin.tar.gz && \
+    tar xvf openjdk-18_linux-x64_bin.tar.gz && \
+    curl -LO https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.27.1-stable.tar.xz && \
+    tar xf flutter_linux_3.27.1-stable.tar.xz && \
+    git config --global --add safe.directory /opt/flutter && \
+    curl -LO https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip && \
+    unzip commandlinetools-linux-11076708_latest.zip && \
+    export JAVA_HOME=/opt/jdk-18 && \
+    export ANDROID_SDK_ROOT=/usr/lib/android-sdk && \
+    export PATH=$PATH:$JAVA_HOME/bin:/usr/share/gradle/bin:/usr/lib/android-sdk/cmdline-tools/latest/bin:/opt/flutter/bin && \
+    echo "y" | /opt/cmdline-tools/bin/sdkmanager --install "cmdline-tools;latest" --sdk_root=$ANDROID_SDK_ROOT && \
+    sdkmanager "platform-tools" "platforms;android-35" && \
+    yes | sdkmanager --licenses && \
+    chown -R user /opt/flutter && \
+    chgrp -R user /opt/flutter && \
+    su - user -c "/opt/flutter/bin/flutter config --no-cli-animations" && \
+    su - user -c "/opt/flutter/bin/flutter config --android-sdk $ANDROID_SDK_ROOT" && \
+    su - user -c "/opt/flutter/bin/flutter doctor" && \
+    echo 'export JAVA_HOME=/opt/jdk-18' >> /usr/local/bin/user-run.sh && \
+    echo 'export ANDROID_SDK_ROOT=/usr/lib/android-sdk' >> /usr/local/bin/user-run.sh && \
+    echo 'export PATH=$PATH:$JAVA_HOME/bin:/usr/share/gradle/bin:/usr/lib/android-sdk/cmdline-tools/latest/bin:/opt/flutter/bin' >> /usr/local/bin/user-run.sh && \
+    echo '' >> /usr/local/bin/user-run.sh && \
+    echo '' >> /home/user/.bashrc && \
+    echo 'export JAVA_HOME=/opt/jdk-18' >> /home/user/.bashrc && \
+    echo 'export ANDROID_SDK_ROOT=/usr/lib/android-sdk' >> /home/user/.bashrc && \
+    echo 'export PATH=$PATH:$JAVA_HOME/bin:/usr/share/gradle/bin:/usr/lib/android-sdk/cmdline-tools/latest/bin:/opt/flutter/bin' >> /home/user/.bashrc && \
+    echo '' >> /home/user/.bashrc && \
+    curl -LO https://services.gradle.org/distributions/gradle-8.11.1-bin.zip && \
+    unzip gradle-8.11.1-bin.zip && \
+    mv /opt/gradle-8.11.1 /usr/share/gradle && \
+    rm /opt/commandlinetools-linux-11076708_latest.zip && \
+    rm /opt/flutter_linux_3.27.1-stable.tar.xz && \
+    rm /opt/openjdk-18_linux-x64_bin.tar.gz && \
+    rm /opt/gradle-8.11.1-bin.zip && \
+    rm -rf /opt/cmdline-tools && \
+    rm -rf /tmp/*
+USER $USERNAME
+WORKDIR /home/$USERNAME
+ENTRYPOINT ["/usr/local/bin/main-run.sh"]
