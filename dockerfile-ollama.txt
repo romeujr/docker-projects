@@ -1,0 +1,28 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE AS base
+ARG EXTRA_PACKAGES
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && \
+    apt install -y \
+    $EXTRA_PACKAGES \
+    curl \
+    procps && \
+    cd /tmp && \
+    curl -fsSL https://ollama.com/install.sh | sh && \
+    printf 'ollama\nLarge language model tool\nuser\n/usr/local/bin/ollama\nserve' | /usr/local/bin/build-service.sh && \
+    service ollama start && \
+    for i in {1..10}; do [ -d /home/user/.ollama/models ] && break || sleep 1; done && \
+    if [ ! -d /home/user/.ollama/models ]; then echo "Path not found: ~/.ollama/models"; exit 1; fi && \
+    for i in {1..10}; do service ollama stop; service ollama status; [ $? -eq 0 ] && sleep 1 || break; done && \
+    service ollama status; if [ $? -eq 0 ]; then echo "Service setup error"; exit 1; fi && \
+    mv /home/user/.ollama/models /models && \
+    ln -s /models /home/user/.ollama/models && \
+    echo '/usr/local/bin/check-mounting-path.sh --path="/models" --user="user" --chmod=755' >> /usr/local/bin/root-setup.sh && \
+    echo 'if [ $? -ne 0 ]; then' >> /usr/local/bin/root-setup.sh && \
+    echo '  exit -1' >> /usr/local/bin/root-setup.sh && \
+    echo 'fi' >> /usr/local/bin/root-setup.sh && \
+    echo '' >> /usr/local/bin/root-setup.sh && \
+    echo 'service ollama start' >> /usr/local/bin/root-setup.sh && \
+    echo '' >> /usr/local/bin/root-setup.sh && \
+    rm -rf /tmp/*
+ENTRYPOINT ["/usr/local/bin/main-run.sh"]

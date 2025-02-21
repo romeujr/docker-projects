@@ -166,6 +166,74 @@ RUN apt update && \
     echo '  /usr/local/bin/wait-for-interruption.sh' >> /usr/local/bin/main-run.sh && \
     echo 'fi' >> /usr/local/bin/main-run.sh && \
     echo '' >> /usr/local/bin/main-run.sh && \
-    chmod 554 /usr/local/bin/main-run.sh  && \
+    chmod 554 /usr/local/bin/main-run.sh && \
+    echo '#!/bin/bash' >> /usr/local/bin/build-service.sh && \
+    echo '' >> /usr/local/bin/build-service.sh && \
+    echo 'read -p "Service name: " SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'if [[ ! "$SERVICE_NAME" =~ ^[a-zA-Z0-9._-]+$ ]]; then' >> /usr/local/bin/build-service.sh && \
+    echo '  echo "Invalid service name: $SERVICE_NAME"' >> /usr/local/bin/build-service.sh && \
+    echo '  exit -1' >> /usr/local/bin/build-service.sh && \
+    echo 'fi' >> /usr/local/bin/build-service.sh && \
+    echo '' >> /usr/local/bin/build-service.sh && \
+    echo 'read -p "Short description: " SHORT_DESCRIPTION' >> /usr/local/bin/build-service.sh && \
+    echo '' >> /usr/local/bin/build-service.sh && \
+    echo 'if [[ -z "$SHORT_DESCRIPTION" ]]; then' >> /usr/local/bin/build-service.sh && \
+    echo '  echo "Invalid short description: $SHORT_DESCRIPTION"' >> /usr/local/bin/build-service.sh && \
+    echo '  exit -1' >> /usr/local/bin/build-service.sh && \
+    echo 'fi' >> /usr/local/bin/build-service.sh && \
+    echo '' >> /usr/local/bin/build-service.sh && \
+    echo 'PID_FILE=/var/run/$SERVICE_NAME.pid' >> /usr/local/bin/build-service.sh && \
+    echo '' >> /usr/local/bin/build-service.sh && \
+    echo 'read -p "Username: " USER_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'if [[ -z "$USER_NAME" ]]; then' >> /usr/local/bin/build-service.sh && \
+    echo '  echo "Invalid username: $USER_NAME"' >> /usr/local/bin/build-service.sh && \
+    echo '  exit -1' >> /usr/local/bin/build-service.sh && \
+    echo 'fi' >> /usr/local/bin/build-service.sh && \
+    echo '' >> /usr/local/bin/build-service.sh && \
+    echo 'read -p "Command line: " COMMAND_LINE' >> /usr/local/bin/build-service.sh && \
+    echo 'if [[ -z "$COMMAND_LINE" ]]; then' >> /usr/local/bin/build-service.sh && \
+    echo '  echo "Invalid command line: $COMMAND_LINE"' >> /usr/local/bin/build-service.sh && \
+    echo '  exit -1' >> /usr/local/bin/build-service.sh && \
+    echo 'fi' >> /usr/local/bin/build-service.sh && \
+    echo '' >> /usr/local/bin/build-service.sh && \
+    echo 'read -p "Extra parameters: " EXTRA_PARAMETERS' >> /usr/local/bin/build-service.sh && \
+    echo '' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "#!/bin/bash" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "### BEGIN INIT INFO" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "# Provides:          $SERVICE_NAME" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "# Short-Description: $SHORT_DESCRIPTION" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "### END INIT INFO" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo ". /lib/lsb/init-functions" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "case "\$1" in" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "  start)" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    start-stop-daemon --status --pidfile $PID_FILE >/dev/null 2>&1" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    if [ \$? -ne 0 ]; then" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "      start-stop-daemon --start --background --make-pidfile --pidfile $PID_FILE --exec $COMMAND_LINE --chuid user --output /var/log/$SERVICE_NAME -- $EXTRA_PARAMETERS" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    fi" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    ;;" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "  stop)" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    if start-stop-daemon --status --pidfile $PID_FILE >/dev/null 2>&1; then" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "      start-stop-daemon --stop --pidfile $PID_FILE" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    fi" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    ;;" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "  restart)" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    \$0 stop" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    \$0 start" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    ;;" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "  status)" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    status_of_proc -p $PID_FILE $COMMAND_LINE \"$SERVICE_NAME\" && exit 0 || exit \$?" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    ;;" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "  *)" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    echo \"Usage: \$0 {start|stop|restart|status}\"" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    exit 1" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "    ;;" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "esac" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'echo "exit 0" >> /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    echo 'chmod +x /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
+    chmod 554 /usr/local/bin/build-service.sh && \
     rm -rf /tmp/*
 ENTRYPOINT ["/usr/local/bin/main-run.sh"]
