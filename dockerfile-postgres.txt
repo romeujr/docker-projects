@@ -38,4 +38,4 @@ RUN apt update && \
     echo 'echo "ALTER USER postgres WITH PASSWORD '\''$POSTGRES_PASSWORD'\'';" | su postgres -c "psql"' >> /usr/local/bin/root-setup.sh && \
     echo '' >> /usr/local/bin/root-setup.sh && \
     rm -rf /tmp/*
-ENTRYPOINT ["/usr/local/bin/main-run.sh"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/main-run.sh"]
