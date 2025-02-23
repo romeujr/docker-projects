@@ -4,6 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
     $EXTRA_PACKAGES \
+    tini \
     dos2unix && \
     adduser --disabled-password --gecos '' user && \
     echo '#!/bin/bash' >> /usr/local/bin/wait-for-interruption.sh && \
@@ -148,6 +149,13 @@ RUN apt update && \
     chmod 554 /usr/local/bin/root-setup.sh && \
     echo '#!/bin/bash' >> /usr/local/bin/main-run.sh && \
     echo '' >> /usr/local/bin/main-run.sh && \
+    echo 'cleanup() {' >> /usr/local/bin/main-run.sh && \
+    echo '  /usr/local/bin/safe-stop.sh' >> /usr/local/bin/main-run.sh && \
+    echo '  exit 0' >> /usr/local/bin/main-run.sh && \
+    echo '}' >> /usr/local/bin/main-run.sh && \
+    echo '' >> /usr/local/bin/main-run.sh && \
+    echo 'trap cleanup SIGTERM SIGINT' >> /usr/local/bin/main-run.sh && \
+    echo '' >> /usr/local/bin/main-run.sh && \
     echo 'env > /var/root_env.txt' >> /usr/local/bin/main-run.sh && \
     echo '' >> /usr/local/bin/main-run.sh && \
     echo 'echo ""' >> /usr/local/bin/main-run.sh && \
@@ -163,10 +171,17 @@ RUN apt update && \
     echo 'fi' >> /usr/local/bin/main-run.sh && \
     echo '' >> /usr/local/bin/main-run.sh && \
     echo 'if [ $(/usr/local/bin/parameter-count.sh "/wait" $*) -ge 1 ]; then' >> /usr/local/bin/main-run.sh && \
-    echo '  /usr/local/bin/wait-for-interruption.sh' >> /usr/local/bin/main-run.sh && \
+    echo '  while true; do' >> /usr/local/bin/main-run.sh && \
+    echo '    sleep 1' >> /usr/local/bin/main-run.sh && \
+    echo '  done' >> /usr/local/bin/main-run.sh && \
     echo 'fi' >> /usr/local/bin/main-run.sh && \
     echo '' >> /usr/local/bin/main-run.sh && \
     chmod 554 /usr/local/bin/main-run.sh && \
+    echo '#!/bin/bash' >> /usr/local/bin/safe-stop.sh && \
+    echo '' >> /usr/local/bin/safe-stop.sh && \
+    echo 'echo "Safe stop: Please wait..."' >> /usr/local/bin/safe-stop.sh && \
+    echo '' >> /usr/local/bin/safe-stop.sh && \
+    chmod 554 /usr/local/bin/safe-stop.sh && \
     echo '#!/bin/bash' >> /usr/local/bin/build-service.sh && \
     echo '' >> /usr/local/bin/build-service.sh && \
     echo 'read -p "Service name: " SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
@@ -236,4 +251,4 @@ RUN apt update && \
     echo 'chmod +x /etc/init.d/$SERVICE_NAME' >> /usr/local/bin/build-service.sh && \
     chmod 554 /usr/local/bin/build-service.sh && \
     rm -rf /tmp/*
-ENTRYPOINT ["/usr/local/bin/main-run.sh"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/main-run.sh"]
