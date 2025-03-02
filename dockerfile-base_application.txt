@@ -7,11 +7,6 @@ RUN apt update && \
     tini \
     dos2unix && \
     adduser --disabled-password --gecos '' user && \
-    echo '#!/bin/bash' >> /usr/local/bin/wait-for-interruption.sh && \
-    echo '' >> /usr/local/bin/wait-for-interruption.sh && \
-    echo 'while sleep 1; do :; done' >> /usr/local/bin/wait-for-interruption.sh && \
-    echo '' >> /usr/local/bin/wait-for-interruption.sh && \
-    chmod 555 /usr/local/bin/wait-for-interruption.sh && \
     echo '#!/bin/bash' >> /usr/local/bin/parameter-count.sh && \
     echo '' >> /usr/local/bin/parameter-count.sh && \
     echo 'target="$1"' >> /usr/local/bin/parameter-count.sh && \
@@ -170,7 +165,7 @@ RUN apt update && \
     echo '  fi' >> /usr/local/bin/main-run.sh && \
     echo 'fi' >> /usr/local/bin/main-run.sh && \
     echo '' >> /usr/local/bin/main-run.sh && \
-    echo 'if [ $(/usr/local/bin/parameter-count.sh "/wait" $*) -ge 1 ]; then' >> /usr/local/bin/main-run.sh && \
+    echo 'if [ $(/usr/local/bin/parameter-count.sh "/await" $*) -ge 1 ]; then' >> /usr/local/bin/main-run.sh && \
     echo '  while true; do' >> /usr/local/bin/main-run.sh && \
     echo '    sleep 1' >> /usr/local/bin/main-run.sh && \
     echo '  done' >> /usr/local/bin/main-run.sh && \
